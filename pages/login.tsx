@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { loginUser } from "../services/userApi";
 
 interface Props {}
 
 const Login: React.FC<Props> = () => {
+  const router = useRouter();
   const [loginInfo, setLoginInfo] = useState<LoginInfo>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -17,6 +19,8 @@ const Login: React.FC<Props> = () => {
     const data = await loginUser(loginInfo);
     if (data.success === false) {
       setErrorMessage(data.message);
+    } else {
+      router.push("/");
     }
   };
   return (

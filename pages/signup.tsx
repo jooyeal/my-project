@@ -1,9 +1,12 @@
-import React, { ChangeEvent, useState } from "react";
+import { useRouter } from "next/router";
+import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { createUser } from "../services/userApi";
 
 interface Props {}
 
 const Signup: React.FC<Props> = () => {
+  const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
   const [userInfo, setUserInfo] = useState<User>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -11,18 +14,23 @@ const Signup: React.FC<Props> = () => {
     setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
   };
 
-  const onSubmit = async (e: any) => {
+  const onSubmit = async (e: FormEvent) => {
     // Set form datas in userInfo and request create user
     e.preventDefault();
-    const data = await createUser(userInfo);
-    if (data.success === false) {
-      setErrorMessage(data.message);
+    const signUpData = await createUser(userInfo);
+    if (signUpData.success === false) {
+      setErrorMessage(signUpData.message);
+    } else {
+      router.push("/successSignup");
     }
-    // TODO: send email to verify account
   };
   return (
     <div className="flex justify-center items-center h-screen">
-      <form className="flex flex-col items-center gap-7" onSubmit={onSubmit}>
+      <form
+        ref={formRef}
+        className="flex flex-col items-center gap-7"
+        onSubmit={onSubmit}
+      >
         <h2 className="font-bold text-5xl text-red-400">SIGNUP</h2>
         <input
           onChange={onChange}
